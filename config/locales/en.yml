@@ -1,0 +1,18 @@
+# Sample localization file for English. Add more files in this directory for other locales.
+# See https://github.com/svenfuchs/rails-i18n/tree/master/rails%2Flocale for starting points.
+
+en:
+  spree:
+    gift: "Buy for a friend"
+    gift_header: "Buying for a friend?"
+    friend_name: "Friend's Name"
+    friend_email: "Friend's Email"
+    friend_phone_number: "Friend's Phone Number"
+    friend_message: "Write a message to your friend"
+    is_a_gift: "Yes, i am purchasing for a friend"
+    order_is_a_gift: "This order is a gift, you can check if gifts are being redeemed in the gifts page."
+    redeem_code: "Redeem Code"
+    redeem_instruction: "An email should had been send to your friend with a redeem code. The following code is provided to you just incase your friend did not receive the code, you can give to your friend. Your friend can then redeem the code via: %{redeem_url}"
+    order_not_paid_yet: "The redeem code will be emailed to your friend and show up here once your payment has completed."
+    order_state:
+      gift: "Gift"

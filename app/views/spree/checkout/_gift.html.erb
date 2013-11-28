@@ -1,0 +1,39 @@
+<div class="row">
+  <%@order.gift = Spree::GiftOrder.find_or_initialize_by(order_id: @order.id) if @order.gift.nil?%>
+  <%= form.fields_for :gift do |gift|%>
+  <div class="large-12 columns" data-hook="gift_fieldset_wrapper">
+    <h2><%= Spree.t(:gift_header) %></h2>
+    <div class="panel">
+      <div class="row">
+        <div class="large-12 columns">
+          <%= form.check_box :is_gift%><%=form.label :is_gift, Spree.t(:is_a_gift), style: "display: inline-block" %>
+        </div>
+        <div class="large-12 columns" id="friend_name">
+          <%= gift.label :friend_name, Spree.t(:friend_name), style: "display: inline-block" %><span class="required">*</span>
+          <%= gift.text_field :friend_name, :class => 'required', disabled: true, required: true %>
+        </div>
+        <div class="large-12 columns" id="friend_email">
+          <%= gift.label :friend_email, Spree.t(:friend_email), style: "display: inline-block" %><span class="required">*</span>
+          <%= gift.email_field :friend_email, :class => 'required', disabled: true, required: true %>
+        </div>
+        <div class="large-12 columns" id="friend_message">
+          <%= gift.label :friend_message, Spree.t(:friend_message), style: "display: inline-block" %><span class="required">*</span>
+          <%= gift.text_area :friend_message, disabled: true, required: true %>
+        </div>
+      </div>
+    </div>
+    <hr />
+  </div>
+  <%end%>
+  <div class="large-12 columns form-buttons" data-hook="buttons">
+    <%= button_tag Spree.t(:save_and_continue), :class => 'product-btn' %>
+  </div>
+</div>
+
+  <script>
+  $(function(){
+    $("#order_is_gift").change(function(){
+      $('#order_gift_attributes_friend_name,#order_gift_attributes_friend_email,#order_gift_attributes_friend_message').attr('disabled', ($(this).is(':checked') ?  false : 'disabled'));
+    }).trigger("change");
+  })
+  </script>
