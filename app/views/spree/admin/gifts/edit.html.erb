@@ -1,0 +1,158 @@
+
+<%= form_for @gift, :url => admin_gift_url(@gift) do |f| %>
+<% if f.object.errors.any? %>
+   <div class="alert-box alert">
+     The form contains <%= pluralize(f.object.errors.count, "error") %>.
+
+      <ul class="disc">
+       <% f.object.errors.full_messages.each do |msg| %>
+        <li><%= msg %></li>
+       <% end %>
+     </ul>
+   </div>
+<%end%>
+<fieldset data-hook="admin_customer_detail_form_fields" class="no-border-top">
+
+  <fieldset class="index no-border-bottom" data-hook="customer_guest">
+    <legend align="center"><%= Spree.t(:account) %></legend>
+
+    <div data-hook="customer_fields" class="row">
+      <div class="alpha eight columns">
+        <div class="field">
+          <%= f.label :friend_name, Spree.t(:name) %>
+          <%= f.text_field :friend_name, :class => 'fullwidth' %>
+        </div>
+        <div class="field">
+          <%= f.label :friend_email, Spree.t(:email) %>
+          <%= f.email_field :friend_email, :class => 'fullwidth' %>
+        </div>
+        <div class="field">
+          <%= f.label :status, Spree.t(:status) %><br />
+          <%= f.select :status, ['unused','redeemed','completed']%>
+        </div>
+      </div>
+      <div class="omega four columns">
+        <div class="field">
+          <%= label_tag nil, Spree.t(:friend_message) %>
+          <ul>
+            <li><pre><%= @gift.friend_message %></pre></li>
+          </ul>
+
+        </div>
+        <div class="field">
+          <%= label_tag nil, Spree.t(:redeem_code) %>
+          <ul>
+            <li><%= @gift.redeem_code%></li>
+          </ul>
+
+        </div>
+      </div>
+      <div class="omega four columns">
+        <div class="field">
+          <%= label_tag nil, Spree.t(:order) %>
+          <ul>
+            <li><%= link_to @gift.order.number,edit_admin_order_path(@gift.order)%></li>
+            <li>Shipment: <%= link_to @gift.order.shipment_state,edit_admin_order_path(@gift.order)%></li>
+          </ul>
+
+        </div>
+      </div>
+    </div>
+  </fieldset>
+
+  <div class="omega sixteen columns" data-hook="address_wrapper">
+    <fieldset class="no-border-bottom">
+      <legend align="center"><%= Spree.t(:shipping_address) %></legend>
+      <%
+        if @gift.friend_address.nil?
+          @gift.friend_address = Spree::Address.new
+          @gift.friend_address.country_id = 120
+          @gift.friend_address.state_id = 0
+        end
+        type = 'billing'
+        s_or_b = 'b'
+       %>
+      <%= f.fields_for :friend_address,@gift.friend_address do |s| %>
+        <div id="<%= type %>" data-hook="address_fields">
+          <div class="field <%= "#{type}-row" %>">
+            <%= s.label :firstname, Spree.t(:first_name) %>
+            <%= s.text_field :firstname, :class => 'fullwidth' %>
+          </div>
+
+          <div class="field <%= "#{type}-row" %>">
+            <%= s.label :lastname, Spree.t(:last_name) %>
+            <%= s.text_field :lastname, :class => 'fullwidth' %>
+          </div>
+
+          <% if Spree::Config[:company] %>
+            <div class="field <%= "#{type}-row" %>">
+              <%= s.label :company, Spree.t(:company) %>
+              <%= s.text_field :company, :class => 'fullwidth' %>
+            </div>
+          <% end %>
+
+          <div class="field <%= "#{type}-row" %>">
+            <%= s.label :address1, Spree.t(:street_address) %>
+            <%= s.text_field :address1, :class => 'fullwidth' %>
+          </div>
+
+          <div class="field <%= "#{type}-row" %>">
+            <%= s.label :address2, Spree.t(:street_address_2) %>
+            <%= s.text_field :address2, :class => 'fullwidth' %>
+          </div>
+
+          <div class="field <%= "#{type}-row" %>">
+            <%= s.label :city, Spree.t(:city) %>
+            <%= s.text_field :city, :class => 'fullwidth' %>
+          </div>
+
+          <div class="field <%= "#{type}-row" %>">
+            <%= s.label :zipcode, Spree.t(:zip) %>
+            <%= s.text_field :zipcode, :class => 'fullwidth' %>
+          </div>
+
+          <div class="field <%= "#{type}-row" %>">
+            <%= s.label :country_id, Spree.t(:country) %>
+            <span id="<%= s_or_b %>country">
+              <%= s.collection_select :country_id, available_countries, :id, :name, {}, {:class => 'select2 fullwidth'} %>
+            </span>
+          </div>
+
+          <div class="field <%= "#{type}-row" %>">
+            <%= s.label :state_id, Spree.t(:state) %>
+            <span id="<%= s_or_b %>state">
+              <%= s.text_field :state_name,
+                    :style => "display: #{s.object.country.states.empty? ? 'block' : 'none' };",
+                   :disabled => !s.object.country.states.empty?, :class => 'fullwidth state_name' %>
+              <%= s.collection_select :state_id, s.object.country.states.sort, :id, :name, {:include_blank => true}, {:class => 'select2 fullwidth', :style => "display: #{s.object.country.states.empty? ? 'none' : 'block' };", :disabled => s.object.country.states.empty?} %>
+            </span>
+          </div>
+
+          <div class="field <%= "#{type}-row" %>">
+            <%= s.label :phone, Spree.t(:phone) %>
+            <%= s.phone_field :phone, :class => 'fullwidth' %>
+          </div>
+        </div>
+
+        <% content_for :head do %>
+          <%= javascript_tag do -%>
+            $(document).ready(function(){
+              $('span#bcountry .select2').on('change', function() { update_state('b'); });
+            });
+          <% end -%>
+        <% end %>
+      <% end %>
+    </fieldset>
+  </div>
+
+  <div class="clear"></div>
+
+  <div class="form-buttons filter-actions actions" data-hook="buttons">
+    <%= button Spree.t('actions.update'), 'icon-refresh' %>
+  </div>
+
+  <% content_for :head do %>
+    <%= javascript_include_tag 'admin/address_states.js' %>
+  <% end %>
+</fieldset>
+<% end %>

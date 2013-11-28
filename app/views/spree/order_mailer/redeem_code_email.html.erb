@@ -1,0 +1,6 @@
+<p>Hi <%= @order.gift.friend_name %>,</p>
+<p>Your friend has send you a gift, the following is a message from him: </p>
+<p><%= @order.gift.friend_message %></p>
+<p>To use redeem your gift enter the following Code in our redeem page: <%= @order.gift.redeem_code %></p>
+
+<p>Redeem now <a href='<%="http://#{Spree::Config[:site_url]}/redeem"%>'></a></p>

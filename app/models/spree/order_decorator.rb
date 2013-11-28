@@ -8,5 +8,6 @@ module Spree
       return self.complete? || self.resumed? || self.awaiting_return? || self.returned? if !self.is_gift? || self.gift.nil?
       self.complete? || self.resumed? || self.awaiting_return? || self.returned? || self.gift.redeemed?
     end
+
   end
 end

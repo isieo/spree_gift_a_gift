@@ -1,0 +1,10 @@
+<div class="row">
+  <div class="large-8 columns large-centered">
+    <h1>Redeem your stuff here</h1>
+    <%=form_tag redeem_index_path,method: :get do%>
+      <%= label_tag :redeem_code, "Fill in Your Redemption Code and hit the Redeem button"%>
+      <%=text_field_tag :redeem_code, "#{params[:redeem_code]}"%>
+      <%=submit_tag "Redeem", class: "button success" %>
+    <%end%>
+  </div>
+</div>

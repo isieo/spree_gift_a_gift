@@ -1,7 +1,7 @@
 module Spree
   class GiftOrder < ActiveRecord::Base
     belongs_to :order
-    belongs_to :friend_address, class_name: "Spree::Address"
+    belongs_to :friend_address, class_name: "Spree::Address",foreign_key: :friend_address_id
     accepts_nested_attributes_for :friend_address
     validate :friend_name, presence: true, if: :fields_not_blank
     validate :friend_email, presence: true, if: :fields_not_blank
