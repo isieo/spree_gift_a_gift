@@ -1,3 +1,4 @@
+<h1>Gifts</h1>
 <% if @gifts.any? %>
   <table class="index responsive" id="listing_gifts" data-hook>
     <colgroup>
@@ -36,7 +37,6 @@
   </table>
 <% else %>
   <div class="alpha twelve columns no-objects-found">
-    <%= Spree.t(:no_resource_found, resource: I18n.t(:other, scope: 'activerecord.models.spree/gift')) %>,
-    <%= link_to Spree.t(:add_one), spree.new_admin_gift_path %>!
+
   </div>
 <% end %>

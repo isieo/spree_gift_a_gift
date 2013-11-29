@@ -26,7 +26,9 @@ Deface::Override.new(:virtual_path => 'spree/admin/orders/edit',
   :name => 'add_gift_field_to_admin_order_edit',
   :insert_after => 'div[data-hook="admin_order_edit_header"]',
   :text => "
+  <%if @order.is_gift?%>
       <div style='background-color: #ddadb6;'><h3 style='color: #EEE'><%=link_to admin_gifts_path do%><%=Spree.t(:order_is_a_gift)%><%end%></h3></div>
+  <%end%>
       ")
 
 Deface::Override.new(:virtual_path => 'spree/admin/shared/_tabs',

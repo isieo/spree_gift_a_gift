@@ -2,7 +2,7 @@
 Gem::Specification.new do |s|
   s.platform    = Gem::Platform::RUBY
   s.name        = 'spree_gift_a_gift'
-  s.version     = '2.1.1.1'
+  s.version     = '2.1.1.2'
   s.summary     = 'Gift functionality for spree'
   s.description = 'Gift functionality for spree'
   s.required_ruby_version = '>= 1.9.3'
