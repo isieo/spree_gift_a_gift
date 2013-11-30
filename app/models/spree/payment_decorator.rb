@@ -4,7 +4,7 @@ module Spree
       order.payments.reload
       order.update!
       if order.paid?
-        if order.is_gift? && !order.gift.nil?
+        if order.is_gift? && !order.gift.nil? && order.gift.sent_at.nil?
            Spree::OrderMailer.redeem_code_email(order.id).deliver
         end
       end

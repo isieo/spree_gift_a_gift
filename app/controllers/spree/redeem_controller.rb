@@ -15,10 +15,13 @@ module Spree
     end
 
     def update
+      if @gift.status  == 'redeemed'
+        redirect_to root_path
+        return
+      end
       if @gift.update(gift_params)
         flash[:notice] = "Successfully used your redeem code. You may be contacted by our customer support staff for confirmation."
         @gift.update(status: 'redeemed')
-        raise @gift.inspect
         redirect_to root_path
         return
       end
