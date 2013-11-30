@@ -16,17 +16,33 @@ module Spree
 
     def update
       if @gift.status  == 'redeemed'
-        redirect_to root_path
-        return
-      end
-      if @gift.update(gift_params)
-        flash[:notice] = "Successfully used your redeem code. You may be contacted by our customer support staff for confirmation."
-        @gift.update(status: 'redeemed')
-        redirect_to root_path
-        return
+       redirect_to root_path
+       return
       end
 
+      @gift.transaction do
+        if @gift.update(gift_params)
+
+          if order_params
+            order_params[:line_items_attributes].each do |k,li|
+              order_line = @gift.order.line_items.find(li[:id])
+              next if !order_line
+              next if order_line.variant.product.variants.where(id: li[:variant_id]).empty?
+              order_line.update!(variant_id: li[:variant_id])
+            end
+            @gift.order.create_proposed_shipments
+          end
+          flash[:notice] = "Successfully used your redeem code. You may be contacted by our customer support staff for confirmation."
+          @gift.update(status: 'redeemed')
+
+         redirect_to root_path
+         return
+        end
+      end
+
+
       @order = @gift.order
+
       render :action => :show
     end
 
@@ -43,7 +59,11 @@ module Spree
       end
 
       def gift_params
-        a = params.require(:gift_order).permit([{order_attribute: {line_items_attributes: [:id,:variant_id]} },:friend_email,:friend_name,:receipent_notes,{friend_address_attributes: [:id, :firstname, :lastname, :address1, :address2, :city, :zipcode, :phone, :state_name, :alternative_phone, :company, :state_id, :country_id]}])
+        params.require(:gift_order).permit([:friend_email,:friend_name,:receipent_notes,{friend_address_attributes: [:id, :firstname, :lastname, :address1, :address2, :city, :zipcode, :phone, :state_name, :alternative_phone, :company, :state_id, :country_id]}])
+      end
+      def order_params
+        return nil if !params[:order]
+        params.require(:order).permit([{line_items_attributes: [:id,:variant_id]}])
       end
   end
 end

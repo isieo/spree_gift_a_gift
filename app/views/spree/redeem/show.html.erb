@@ -43,11 +43,12 @@
                 <td data-hook="item_description">
                   <% if item.product.variants_and_option_values(current_currency).any? %>
                     <div id="product-variants">
+                      <%= hidden_field_tag "order[line_items_attributes][#{item.id}][id]", item.id %>
                       <ul class="no-bullet">
                         <% item.product.variants_and_option_values(current_currency).each_with_index do |variant, index| %>
                           <%next if variant.price != item.variant.price%>
                           <li>
-                            <%= radio_button_tag "gift_order[order[line_items_attributes[#{item.id}][variant_id]]]", variant.id, item.variant.id == variant.id, 'data-price' => display_price(variant)%>
+                            <%= radio_button_tag "order[line_items_attributes][#{item.id}][variant_id]", variant.id, item.variant.id == variant.id, 'data-price' => display_price(variant)%>
                               <span for="<%= ['products', item.id, variant.id].join('_') %>">
                               <span class="variant-description">
                                 <%= variant_options variant %>
