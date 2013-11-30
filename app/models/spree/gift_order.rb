@@ -3,6 +3,7 @@ module Spree
     belongs_to :order
     belongs_to :friend_address, class_name: "Spree::Address",foreign_key: :friend_address_id
     accepts_nested_attributes_for :friend_address
+    accepts_nested_attributes_for :order
     validate :friend_name, presence: true, if: :fields_not_blank
     validate :friend_email, presence: true, if: :fields_not_blank
     validate :friend_message, presence: true, if: :fields_not_blank

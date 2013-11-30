@@ -1,138 +1,161 @@
 <div class="row">
   <div class="large-12 columns">
      <h1>Redeem Items</h1>
+      <%= form_for @gift, url: redeem_path(@gift.redeem_code), method: :patch do |f|%>
+          <% if f.object.errors.any? %>
+             <div class="alert-box alert">
+               The form contains <%= pluralize(f.object.errors.count, "error") %>.
 
-      <table id='line-items' class="large-12 columns" data-hook="order_details">
-      <col width="15%" valign="middle" halign="center">
+                <ul class="disc">
+                 <% f.object.errors.full_messages.each do |msg| %>
+                  <li><%= msg %></li>
+                 <% end %>
+               </ul>
+             </div>
+          <%end%>
+          <table id='line-items' class="large-12 columns" data-hook="order_details">
+          <col width="15%" valign="middle" halign="center">
+          <col valign="middle" halign="center">
+          <col width="30%" valign="middle" halign="center">
 
-      <thead data-hook>
-        <tr data-hook="order_details_line_items_headers">
-          <th colspan="2"><%= Spree.t(:items) %></th>
-        </tr>
-      </thead>
+          <thead data-hook>
+            <tr data-hook="order_details_line_items_headers">
+              <th colspan="2"><%= Spree.t(:items) %></th>
+              <th colspan="2"><%= Spree.t(:variants) %></th>
+            </tr>
+          </thead>
 
-      <tbody data-hook>
-        <% @order.line_items.each do |item| %>
-          <tr data-hook="details_line_item_row">
-            <td data-hook="item_image">
-              <% if item.variant.images.length == 0 %>
-                <%= link_to small_image(item.variant.product), item.variant.product %>
-              <% else %>
-                <%= link_to image_tag(item.variant.images.first.attachment.url(:small)), item.variant.product %>
-              <% end %>
-            </td>
-            <td data-hook="item_description">
-              <h4><%= item.variant.product.name %></h4>
-              <h5 class="subheader"><%= "(" + item.variant.options_text + ")" unless item.variant.option_values.empty? %></h5>
-              <%= item.variant.product.description %>
-            </td>
-          </tr>
-        <% end %>
-      </tbody>
-    </table>
-
-    <h2>Your Shipping Details</h2>
-    <%= form_for @gift, url: redeem_path(@gift.redeem_code), method: :patch do |f|%>
-        <% if f.object.errors.any? %>
-           <div class="alert-box alert">
-             The form contains <%= pluralize(f.object.errors.count, "error") %>.
-
-              <ul class="disc">
-               <% f.object.errors.full_messages.each do |msg| %>
-                <li><%= msg %></li>
-               <% end %>
-             </ul>
-           </div>
-        <%end%>
-        <div class="omega six columns" data-hook="address_wrapper">
-          <fieldset class="no-border-bottom">
-            <%
-              if @gift.friend_address.nil?
-                @gift.friend_address = Spree::Address.new
-                @gift.friend_address.country_id = 120
-                @gift.friend_address.state_id = 0
-              end
-              type = 'billing'
-              s_or_b = 'b'
-             %>
-            <%= f.fields_for :friend_address,@gift.friend_address do |s| %>
-              <div id="<%= type %>" data-hook="address_fields">
-                <div class="field <%= "#{type}-row" %>">
-                  <%= s.label :firstname, Spree.t(:first_name) %>
-                  <%= s.text_field :firstname, :class => 'fullwidth' %>
-                </div>
-
-                <div class="field <%= "#{type}-row" %>">
-                  <%= s.label :lastname, Spree.t(:last_name) %>
-                  <%= s.text_field :lastname, :class => 'fullwidth' %>
-                </div>
-
-                <% if Spree::Config[:company] %>
-                  <div class="field <%= "#{type}-row" %>">
-                    <%= s.label :company, Spree.t(:company) %>
-                    <%= s.text_field :company, :class => 'fullwidth' %>
-                  </div>
-                <% end %>
-
-                <div class="field <%= "#{type}-row" %>">
-                  <%= s.label :address1, Spree.t(:street_address) %>
-                  <%= s.text_field :address1, :class => 'fullwidth' %>
-                </div>
-
-                <div class="field <%= "#{type}-row" %>">
-                  <%= s.label :address2, Spree.t(:street_address_2) %>
-                  <%= s.text_field :address2, :class => 'fullwidth' %>
-                </div>
-
-                <div class="field <%= "#{type}-row" %>">
-                  <%= s.label :city, Spree.t(:city) %>
-                  <%= s.text_field :city, :class => 'fullwidth' %>
-                </div>
-
-                <div class="field <%= "#{type}-row" %>">
-                  <%= s.label :zipcode, Spree.t(:zip) %>
-                  <%= s.text_field :zipcode, :class => 'fullwidth' %>
-                </div>
-
-                <div class="field <%= "#{type}-row" %>">
-                  <%= s.label :country_id, Spree.t(:country) %>
-                  <span id="<%= s_or_b %>country">
-                    <%= s.collection_select :country_id, available_countries, :id, :name, {}, {:class => 'select2 fullwidth'} %>
-                  </span>
-                </div>
-
-                <div class="field <%= "#{type}-row" %>">
-                  <%= s.label :state_id, Spree.t(:state) %>
-                  <span id="<%= s_or_b %>state">
-                    <%= s.text_field :state_name,
-                          :style => "display: #{s.object.country.states.empty? ? 'block' : 'none' };",
-                         :disabled => !s.object.country.states.empty?, :class => 'fullwidth state_name' %>
-                    <%= s.collection_select :state_id, s.object.country.states.sort, :id, :name, {:include_blank => true}, {:class => 'select2 fullwidth', :style => "display: #{s.object.country.states.empty? ? 'none' : 'block' };", :disabled => s.object.country.states.empty?} %>
-                  </span>
-                </div>
-
-                <div class="field <%= "#{type}-row" %>">
-                  <%= s.label :phone, Spree.t(:phone) %>
-                  <%= s.phone_field :phone, :class => 'fullwidth' %>
-                </div>
-              </div>
-
-              <% content_for :head do %>
-                <%= javascript_tag do -%>
-                  $(document).ready(function(){
-                    $('span#bcountry .select2').on('change', function() { update_state('b'); });
-                  });
-                <% end -%>
-              <% end %>
+          <tbody data-hook>
+            <% @order.line_items.each do |item| %>
+              <tr data-hook="details_line_item_row">
+                <td data-hook="item_image">
+                  <% if item.variant.images.length == 0 %>
+                    <%= link_to small_image(item.variant.product), item.variant.product %>
+                  <% else %>
+                    <%= link_to image_tag(item.variant.images.first.attachment.url(:small)), item.variant.product %>
+                  <% end %>
+                </td>
+                <td data-hook="item_description">
+                  <h4><%= item.variant.product.name %></h4>
+                  <h5 class="subheader"><%= "(" + item.variant.options_text + ")" unless item.variant.option_values.empty? %></h5>
+                  <%= item.variant.product.description %>
+                </td>
+                <td data-hook="item_description">
+                  <% if item.product.variants_and_option_values(current_currency).any? %>
+                    <div id="product-variants">
+                      <ul class="no-bullet">
+                        <% item.product.variants_and_option_values(current_currency).each_with_index do |variant, index| %>
+                          <%next if variant.price != item.variant.price%>
+                          <li>
+                            <%= radio_button_tag "gift_order[order[line_items_attributes[#{item.id}][variant_id]]]", variant.id, item.variant.id == variant.id, 'data-price' => display_price(variant)%>
+                              <span for="<%= ['products', item.id, variant.id].join('_') %>">
+                              <span class="variant-description">
+                                <%= variant_options variant %>
+                              </span>
+                              </span>
+                          </li>
+                        <% end%>
+                      </ul>
+                    </div>
+                  <%else%>
+                    <p>No variants for this product</p>
+                  <% end%>
+                </td>
+              </tr>
             <% end %>
-          </fieldset>
-        </div>
+          </tbody>
+        </table>
 
-        <div class="large-12 columns panel">
-          <strong>Remarks & Enquiry</strong>
-          <%=f.text_area :receipent_notes, rows: 3, placeholder: "Additional questions or changes to the product." %>
-          <%=f.submit "Redeem Now", class: "button success"%>
-        </div>
+        <h2>Your Shipping Details</h2>
+          <div class="omega six columns" data-hook="address_wrapper">
+            <fieldset class="no-border-bottom">
+              <%
+                if @gift.friend_address.nil?
+                  @gift.friend_address = Spree::Address.new
+                  @gift.friend_address.country_id = 120
+                  @gift.friend_address.state_id = 0
+                end
+                type = 'billing'
+                s_or_b = 'b'
+               %>
+              <%= f.fields_for :friend_address,@gift.friend_address do |s| %>
+                <div id="<%= type %>" data-hook="address_fields">
+                  <div class="field <%= "#{type}-row" %>">
+                    <%= s.label :firstname, Spree.t(:first_name) %>
+                    <%= s.text_field :firstname, :class => 'fullwidth' %>
+                  </div>
+
+                  <div class="field <%= "#{type}-row" %>">
+                    <%= s.label :lastname, Spree.t(:last_name) %>
+                    <%= s.text_field :lastname, :class => 'fullwidth' %>
+                  </div>
+
+                  <% if Spree::Config[:company] %>
+                    <div class="field <%= "#{type}-row" %>">
+                      <%= s.label :company, Spree.t(:company) %>
+                      <%= s.text_field :company, :class => 'fullwidth' %>
+                    </div>
+                  <% end %>
+
+                  <div class="field <%= "#{type}-row" %>">
+                    <%= s.label :address1, Spree.t(:street_address) %>
+                    <%= s.text_field :address1, :class => 'fullwidth' %>
+                  </div>
+
+                  <div class="field <%= "#{type}-row" %>">
+                    <%= s.label :address2, Spree.t(:street_address_2) %>
+                    <%= s.text_field :address2, :class => 'fullwidth' %>
+                  </div>
+
+                  <div class="field <%= "#{type}-row" %>">
+                    <%= s.label :city, Spree.t(:city) %>
+                    <%= s.text_field :city, :class => 'fullwidth' %>
+                  </div>
+
+                  <div class="field <%= "#{type}-row" %>">
+                    <%= s.label :zipcode, Spree.t(:zip) %>
+                    <%= s.text_field :zipcode, :class => 'fullwidth' %>
+                  </div>
+
+                  <div class="field <%= "#{type}-row" %>">
+                    <%= s.label :country_id, Spree.t(:country) %>
+                    <span id="<%= s_or_b %>country">
+                      <%= s.collection_select :country_id, available_countries, :id, :name, {}, {:class => 'select2 fullwidth'} %>
+                    </span>
+                  </div>
+
+                  <div class="field <%= "#{type}-row" %>">
+                    <%= s.label :state_id, Spree.t(:state) %>
+                    <span id="<%= s_or_b %>state">
+                      <%= s.text_field :state_name,
+                            :style => "display: #{s.object.country.states.empty? ? 'block' : 'none' };",
+                           :disabled => !s.object.country.states.empty?, :class => 'fullwidth state_name' %>
+                      <%= s.collection_select :state_id, s.object.country.states.sort, :id, :name, {:include_blank => true}, {:class => 'select2 fullwidth', :style => "display: #{s.object.country.states.empty? ? 'none' : 'block' };", :disabled => s.object.country.states.empty?} %>
+                    </span>
+                  </div>
+
+                  <div class="field <%= "#{type}-row" %>">
+                    <%= s.label :phone, Spree.t(:phone) %>
+                    <%= s.phone_field :phone, :class => 'fullwidth' %>
+                  </div>
+                </div>
+
+                <% content_for :head do %>
+                  <%= javascript_tag do -%>
+                    $(document).ready(function(){
+                      $('span#bcountry .select2').on('change', function() { update_state('b'); });
+                    });
+                  <% end -%>
+                <% end %>
+              <% end %>
+            </fieldset>
+          </div>
+
+          <div class="large-12 columns panel">
+            <strong>Remarks & Enquiry</strong>
+            <%=f.text_area :receipent_notes, rows: 3, placeholder: "Additional questions or changes to the product." %>
+            <%=f.submit "Redeem Now", class: "button success"%>
+          </div>
     <%end%>
 
 

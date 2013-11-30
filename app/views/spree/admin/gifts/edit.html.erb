@@ -14,6 +14,21 @@
 <fieldset data-hook="admin_customer_detail_form_fields" class="no-border-top">
 
   <fieldset class="index no-border-bottom" data-hook="customer_guest">
+    <legend align="center"><%= Spree.t(:gift) %></legend>
+
+      <div class="sixteen columns">
+        <div class="field">
+          <%= label_tag nil, Spree.t(:redeem_remark) %>
+          <ul>
+            <li><pre><%=@gift.receipent_notes%></pre></li>
+          </ul>
+
+        </div>
+      </div>
+    </div>
+  </fieldset>
+
+  <fieldset class="index no-border-bottom" data-hook="customer_guest">
     <legend align="center"><%= Spree.t(:account) %></legend>
 
     <div data-hook="customer_fields" class="row">

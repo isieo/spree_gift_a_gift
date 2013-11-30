@@ -18,6 +18,7 @@ module Spree
       if @gift.update(gift_params)
         flash[:notice] = "Successfully used your redeem code. You may be contacted by our customer support staff for confirmation."
         @gift.update(status: 'redeemed')
+        raise @gift.inspect
         redirect_to root_path
         return
       end
@@ -39,7 +40,7 @@ module Spree
       end
 
       def gift_params
-        params.require(:gift_order).permit([:friend_email,:friend_name,{friend_address_attributes: [:id, :firstname, :lastname, :address1, :address2, :city, :zipcode, :phone, :state_name, :alternative_phone, :company, :state_id, :country_id]}])
+        a = params.require(:gift_order).permit([{order_attribute: {line_items_attributes: [:id,:variant_id]} },:friend_email,:friend_name,:receipent_notes,{friend_address_attributes: [:id, :firstname, :lastname, :address1, :address2, :city, :zipcode, :phone, :state_name, :alternative_phone, :company, :state_id, :country_id]}])
       end
   end
 end

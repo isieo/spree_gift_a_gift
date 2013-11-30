@@ -9,7 +9,7 @@ Deface::Override.new(:virtual_path => 'spree/shared/_order_details',
         <div class="large-12 columns panel">
           <h3><%= Spree.t(:redeem_code) %></h3>
           <p><%== Spree.t(:redeem_instruction, redeem_url: link_to(redeem_index_url,redeem_index_url)) %></p>
-          <div class="centered"><input style="background-color: #3f3f3f;color:#FEFEFE;font-size:3em;width:250px;text-align:center" value="<%= @order.gift.redeem_code%>" readonly="readonly"></div>
+          <div class="centered"><input style="background-color: #3f3f3f;color:#FEFEFE;font-size:3em;text-align:center" value="<%= @order.gift.redeem_code%>" readonly="readonly"></div>
         </div>
       <%else%>
         <div class="large-12 columns panel">

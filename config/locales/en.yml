@@ -7,6 +7,7 @@ en:
     gift_header: "Buying for a friend?"
     friend_name: "Friend's Name"
     friend_email: "Friend's Email"
+    redeem_remark: "Remarks from Receipent"
     friend_phone_number: "Friend's Phone Number"
     friend_message: "Write a message to your friend"
     is_a_gift: "Yes, i am purchasing for a friend"
