@@ -13,7 +13,7 @@ module Spree
 
       def update
         if @gift.update(gift_params)
-
+          @gift.order.update ship_address_id: @gift.friend_address_id
           flash[:notice] = "Successfully updated"
         end
 
